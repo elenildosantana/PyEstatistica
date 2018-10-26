@@ -69,3 +69,28 @@ def getQuartil3(dados):
 
 def getDistanciaInterquartil(dados):
     return getQuartil3(dados) - getQuartil1(dados)
+
+##########
+#
+# IDENTIFICAÇÃO DE DISCREPÂNCIA - OUTLIERS
+#
+###################
+    
+def getIntervaloOutliersPoucoResistente(dados):
+    """Indentificação de outliers baseado em medidas pouco resistente. Os\
+    outliers estão fora do (valorInferior, valorSuperior)"""
+    media = getMedia(dados)
+    desvioPadrao = getDesvioPadrao(dados)
+    valorInferior = media - 3 * desvioPadrao
+    valorSuperior = media + 3 * desvioPadrao
+    return (valorInferior, valorSuperior)
+
+def getIntervaloOutliersMaisResistente(dados):
+    """Indentificação de outliers baseado em medidas mais resistente. Os\
+    outliers estão fora do (valorInferior, valorSuperior)"""
+    quartil1 = getQuartil1(dados)
+    quartil3 = getQuartil3(dados)
+    distanciaInterquartil = getDistanciaInterquartil(dados)
+    valorInferior = quartil1 - 3/2 * distanciaInterquartil
+    valorSuperior = quartil3 + 3/2 * distanciaInterquartil
+    return (valorInferior, valorSuperior)
