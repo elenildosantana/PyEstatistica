@@ -46,3 +46,26 @@ def getDesvioPadrao(dados):
 
 def getCoefDeVariacao(dados):
     return getDesvioPadrao(dados)/getMedia(dados)
+
+def getQuartil1(dados):
+    tamanho = len(dados)
+    dadosOrdenado = sorted(dados)
+    
+    if tamanho % 2:
+        index = int(tamanho/2)
+        return getMediana(dadosOrdenado[:index+1])
+    else:
+        index = int(tamanho/2)
+        return getMediana(dadosOrdenado[:index])
+    
+def getQuartil2(dados):
+    return getMediana(dados)
+
+def getQuartil3(dados):
+    tamanho = len(dados)
+    dadosOrdenado = sorted(dados)
+    index = int(tamanho/2)
+    return getMediana(dadosOrdenado[index:])
+
+def getDistanciaInterquartil(dados):
+    return getQuartil3(dados) - getQuartil1(dados)
