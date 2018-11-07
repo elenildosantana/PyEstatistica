@@ -94,3 +94,30 @@ def getIntervaloOutliersMaisResistente(dados):
     valorInferior = quartil1 - 3/2 * distanciaInterquartil
     valorSuperior = quartil3 + 3/2 * distanciaInterquartil
     return (valorInferior, valorSuperior)
+
+##########
+#
+# CORRELAÇÃO
+#
+###################
+
+def getCoefDeCorrelacao(dadosX, dadosY):
+    tamanho = len(dadosX)
+    somatorioXmultY = sum([dadosX[i] * dadosY[i] for i in range(tamanho)])
+    mediaX = getMedia(dadosX)
+    mediaY = getMedia(dadosY)
+    
+    somatorioXpow2 = sum([pow(x,2) for x in dadosX])
+    somatorioYpow2 = sum([pow(y,2) for y in dadosY])
+    
+    rxy = (somatorioXmultY-tamanho*mediaX*mediaY)/ \
+    pow((somatorioXpow2-tamanho*pow(mediaX,2))*(somatorioYpow2-tamanho*pow(mediaY,2)),1/2)
+    
+    return rxy
+
+def getCovariancia(dadosX, dadosY):
+    coefCorrelacao = getCoefDeCorrelacao(dadosX, dadosY)
+    desvioPadraoX = getDesvioPadrao(dadosX)
+    desvioPadraoY = getDesvioPadrao(dadosY)
+    sxy = coefCorrelacao * desvioPadraoX *  desvioPadraoY
+    return sxy
