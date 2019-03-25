@@ -18,21 +18,26 @@ def getMedia(dados):
 
 def getMediana(dados):
     tamanho = len(dados)
-    dadosOrdenados = sorted(dados)
-    
-    if tamanho % 2:
-        index = int(tamanho/2)
-        return dadosOrdenados[index]
-    else:
-        index1 = int(tamanho/2)-1
-        index2 = int(tamanho/2)
-        return getMedia([dadosOrdenados[index1], dadosOrdenados[index2]])  
+    posicao  = (tamanho + 1)/2
+    return __quartil(dados, posicao)
 
 ###########
 #
 # MEDIDAS DE DISPERSÃO
 #
 ###########
+
+def __quartil(dados, posicao):
+    """Cálculo dos quartis usando interpolação linear.\ 
+    Primeiro quartil, segundo quartil (mediana) e terceiro quartil."""
+    dadosOrdenados = sorted(dados)
+    valorX = posicao
+    valorX0 = int(valorX)
+    valorX1 = valorX0+1    
+    valorY0 = dadosOrdenados[valorX0-1]
+    valorY1 = dadosOrdenados[valorX1-1]   
+    valorY = valorY0 + ((valorX - valorX0)/(valorX1 - valorX0)) * (valorY1 - valorY0)
+    return valorY
 
 def getVariancia(dados):
     media = getMedia(dados)
@@ -49,23 +54,16 @@ def getCoefDeVariacao(dados):
 
 def getQuartil1(dados):
     tamanho = len(dados)
-    dadosOrdenado = sorted(dados)
-    
-    if tamanho % 2:
-        index = int(tamanho/2)
-        return getMediana(dadosOrdenado[:index+1])
-    else:
-        index = int(tamanho/2)
-        return getMediana(dadosOrdenado[:index])
+    posicao = (tamanho + 3)/4
+    return __quartil(dados, posicao)
     
 def getQuartil2(dados):
     return getMediana(dados)
 
 def getQuartil3(dados):
-    tamanho = len(dados)
-    dadosOrdenado = sorted(dados)
-    index = int(tamanho/2)
-    return getMediana(dadosOrdenado[index:])
+    tamanho = len(dados)    
+    posicao = (3 * tamanho + 1)/4
+    return __quartil(dados, posicao)
 
 def getDistanciaInterquartil(dados):
     return getQuartil3(dados) - getQuartil1(dados)
@@ -121,3 +119,38 @@ def getCovariancia(dadosX, dadosY):
     desvioPadraoY = getDesvioPadrao(dadosY)
     sxy = coefCorrelacao * desvioPadraoX *  desvioPadraoY
     return sxy
+
+
+def getInclinacaoDaRetaDeRegressao(dadosX, dadosY):
+    tamanho = len(dadosX)
+    somatorioXmultY = sum([dadosX[i] * dadosY[i] for i in range(tamanho)])
+    somatorioX = sum(dadosX)
+    somatorioY = sum(dadosY)
+    somatorioXPow2 = sum([pow(x, 2) for x in dadosX])
+    inclinacao = (somatorioXmultY - ((somatorioX * somatorioY)/tamanho))/ \
+    (somatorioXPow2 - (pow(somatorioX, 2)/tamanho))
+    
+    return inclinacao
+
+def getInterceptoDaRetaDeRegressao(dadosX, dadosY):
+    tamanho = len(dadosX)
+    somatorioX = sum(dadosX)
+    somatorioY = sum(dadosY)
+    inclinacao = getInclinacaoDaRetaDeRegressao(dadosX,dadosY)
+    intercepto = (somatorioY - inclinacao * somatorioX)/tamanho
+    
+    return intercepto
+
+def getEquacaoDaRetaDeRegrecao(dadosX, dadosY):
+    a = getInterceptoDaRetaDeRegressao(dadosX, dadosY)
+    b = getInclinacaoDaRetaDeRegressao(dadosX, dadosY)
+    return "y = %f + %f * x" % (a, b)
+
+def getValorDeAjusteLinear(dadosX, dadosY, varExplicativaX):
+    a = getInterceptoDaRetaDeRegressao(dadosX, dadosY)
+    b = getInclinacaoDaRetaDeRegressao(dadosX, dadosY)
+    y = a + b * varExplicativaX
+    return y
+
+
+
